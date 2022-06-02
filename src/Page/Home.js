@@ -18,7 +18,7 @@ function getAverage(grades) {
 // Return array of students as objects
 function getAllAveragefor(students) {
   for (let student of students) {
-    let average = getAverage(student.grades);
+    const average = getAverage(student.grades);
     student["average"] = average;
   }
   return students;
@@ -64,7 +64,7 @@ function resetTag(tags, key) {
 // Return new array of students as objects
 function displayList(students, name, tag) {
   if (name !== "" && tag !== "") {
-    let newStudents = students.filter(
+    const newStudents = students.filter(
       (student) =>
         (student.firstName.toLowerCase().indexOf(name.toLowerCase()) === 0 ||
           student.lastName.toLowerCase().indexOf(name.toLowerCase()) === 0 ||
@@ -78,7 +78,7 @@ function displayList(students, name, tag) {
     );
     return newStudents;
   } else if (name !== "") {
-    let newStudents = students.filter(
+    const newStudents = students.filter(
       (student) =>
         student.firstName.toLowerCase().indexOf(name.toLowerCase()) === 0 ||
         student.lastName.toLowerCase().indexOf(name.toLowerCase()) === 0 ||
@@ -90,7 +90,7 @@ function displayList(students, name, tag) {
     );
     return newStudents;
   } else if (tag !== "") {
-    let newStudents = students.filter(
+    const newStudents = students.filter(
       (student) => student.tags && student.tags.includes(tag)
     );
     return newStudents;
@@ -110,6 +110,7 @@ export default class index extends Component {
       name: "",
       tags: [],
       searchTag: "",
+      placeholder: "",
     };
 
     this.onChange = this.onChange.bind(this);
@@ -148,17 +149,18 @@ export default class index extends Component {
     });
   }
 
+  // Get the row number
+  // Set "gradeVisible" to opposite of this in students array
   onOpen(key) {
     let state = this.state.students;
     state[key].gradeVisible = !state[key].gradeVisible;
     this.setState({ state });
-
-    console.log(this.state.students);
   }
 
+  // Get the row number of hidden button clicked
+  // Set (add) new tag in "tags" with addTags() and reset the tag with resetTag()
   onSubmit(e, key) {
     e.preventDefault();
-
     this.setState({
       students: addTags(this.state.students, this.state.tags[key], key),
       tags: resetTag(this.state.tags, key),
@@ -184,75 +186,77 @@ export default class index extends Component {
           value={this.state.searchTag}
           onChange={this.onChange}
         />
-        {displayList(
-          this.state.students,
-          this.state.name,
-          this.state.searchTag
-        ).map((student, i) => (
-          <div key={i}>
-            <div className='div' id='div1'>
-              <img
-                src={student.pic}
-                alt={`${student.firstName} ${student.lastName}`}
-              />
-            </div>
-            <div className='div' id='div2'>
-              <h1>
-                {`${student.firstName.toUpperCase()} ${student.lastName.toUpperCase()}`}
-              </h1>
-              <p>Email: {student.email}</p>
-              <p>Company: {student.company}</p>
-              <p>Skill: {student.skill}</p>
-              <p>Average: {student.average}%</p>
-            </div>
-            <div className='div' id='div3'>
-              {student.gradeVisible ? (
-                <button id={`button${i}`} onClick={() => this.onOpen(i)}>
-                  -
-                </button>
-              ) : (
-                <button id={`button${i}`} onClick={() => this.onOpen(i)}>
-                  +
-                </button>
-              )}
-            </div>
-            <div id='gradeDiv'>
-              {student.gradeVisible ? (
-                <ul>
-                  {student.grades.map((grade, i) => (
-                    <li key={i}>
-                      Test {i + 1}
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{grade}%
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-            </div>
-            <div className='tagDiv'>
-              {student.tags ? (
-                <div>
-                  {student.tags.map((tag, i) => (
-                    <p key={i} className='pTag'>
-                      {tag}
-                    </p>
-                  ))}
-                </div>
-              ) : null}
-            </div>
-            <div>
-              <form onSubmit={(e) => this.onSubmit(e, i)}>
-                <input
-                  id='tagInput'
-                  placeholder='Add a tag'
-                  name='tag'
-                  value={this.state.tags[i]}
-                  onChange={(e) => this.onChangeTag(e, i)}
+        <div id='body'>
+          {displayList(
+            this.state.students,
+            this.state.name,
+            this.state.searchTag
+          ).map((student, i) => (
+            <div key={i}>
+              <div className='div' id='div1'>
+                <img
+                  src={student.pic}
+                  alt={`${student.firstName} ${student.lastName}`}
                 />
-                <input type='submit' hidden />
-              </form>
+              </div>
+              <div className='div' id='div2'>
+                <h1>
+                  {`${student.firstName.toUpperCase()} ${student.lastName.toUpperCase()}`}
+                </h1>
+                <p>Email: {student.email}</p>
+                <p>Company: {student.company}</p>
+                <p>Skill: {student.skill}</p>
+                <p>Average: {student.average}%</p>
+              </div>
+              <div className='div' id='div3'>
+                {student.gradeVisible ? (
+                  <button id={`button${i}`} onClick={() => this.onOpen(i)}>
+                    -
+                  </button>
+                ) : (
+                  <button id={`button${i}`} onClick={() => this.onOpen(i)}>
+                    +
+                  </button>
+                )}
+              </div>
+              <div id='gradeDiv'>
+                {student.gradeVisible ? (
+                  <ul>
+                    {student.grades.map((grade, i) => (
+                      <li key={i}>
+                        Test {i + 1}
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{grade}%
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+              <div className='tagDiv'>
+                {student.tags ? (
+                  <div>
+                    {student.tags.map((tag, i) => (
+                      <p key={i} className='pTag'>
+                        {tag}
+                      </p>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+              <div>
+                <form onSubmit={(e) => this.onSubmit(e, i)}>
+                  <input
+                    id='tagInput'
+                    placeholder='Add a tag'
+                    name='tag'
+                    value={this.state.tags[i]}
+                    onChange={(e) => this.onChangeTag(e, i)}
+                  />
+                  <input type='submit' hidden />
+                </form>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </main>
     );
   }

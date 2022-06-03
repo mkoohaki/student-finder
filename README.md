@@ -1,4 +1,4 @@
-#Student Finder Application
+# Student Finder Application
 
 
 <img src="img/Pic.PNG" width="80%" height="auto">

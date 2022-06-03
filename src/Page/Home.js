@@ -51,11 +51,16 @@ function addTags(students, tag, key) {
 // Set "tags" for the specific student to ""
 // Return array of tags
 function resetTag(tags, key) {
+  console.log("reset key: " + key);
+  console.log("tags: " + tags);
+
   let newTags = tags;
   let newTag = newTags[key];
 
   newTag = "";
   newTags[key] = newTag;
+  console.log("newTags: " + newTags);
+
   return newTags;
 }
 
@@ -140,6 +145,7 @@ export default class index extends Component {
   // Get any change in inputs of tag and the row
   // Set name and searchTag
   onChangeTag(e, key) {
+    console.log("onChangeTag: " + this.state.students);
     let oldTags = [...this.state.tags];
     let oldTag = { ...oldTags[key] };
     oldTag = e.target.value;
@@ -161,6 +167,10 @@ export default class index extends Component {
   // Set (add) new tag in "tags" with addTags() and reset the tag with resetTag()
   onSubmit(e, key) {
     e.preventDefault();
+    console.log("onSubmit", this.state.students);
+    console.log("key", key);
+    console.log("this.state.tags[key]", this.state.tags[key]);
+
     this.setState({
       students: addTags(this.state.students, this.state.tags[key], key),
       tags: resetTag(this.state.tags, key),
@@ -187,6 +197,7 @@ export default class index extends Component {
           onChange={this.onChange}
         />
         <div id='body'>
+          {/* sdfsdffd */}
           {displayList(
             this.state.students,
             this.state.name,
@@ -210,11 +221,17 @@ export default class index extends Component {
               </div>
               <div className='div' id='div3'>
                 {student.gradeVisible ? (
-                  <button id={`button${i}`} onClick={() => this.onOpen(i)}>
+                  <button
+                    id={`button${student.id - 1}`}
+                    onClick={() => this.onOpen(student.id - 1)}
+                  >
                     -
                   </button>
                 ) : (
-                  <button id={`button${i}`} onClick={() => this.onOpen(i)}>
+                  <button
+                    id={`button${student.id - 1}`}
+                    onClick={() => this.onOpen(student.id - 1)}
+                  >
                     +
                   </button>
                 )}
@@ -243,13 +260,12 @@ export default class index extends Component {
                 ) : null}
               </div>
               <div>
-                <form onSubmit={(e) => this.onSubmit(e, i)}>
+                <form onSubmit={(e) => this.onSubmit(e, student.id - 1)}>
                   <input
                     id='tagInput'
                     placeholder='Add a tag'
-                    name='tag'
-                    value={this.state.tags[i]}
-                    onChange={(e) => this.onChangeTag(e, i)}
+                    value={this.state.tags[student.id - 1]}
+                    onChange={(e) => this.onChangeTag(e, student.id - 1)}
                   />
                   <input type='submit' hidden />
                 </form>

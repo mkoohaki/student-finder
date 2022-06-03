@@ -51,15 +51,11 @@ function addTags(students, tag, key) {
 // Set "tags" for the specific student to ""
 // Return array of tags
 function resetTag(tags, key) {
-  console.log("reset key: " + key);
-  console.log("tags: " + tags);
-
   let newTags = tags;
   let newTag = newTags[key];
 
   newTag = "";
   newTags[key] = newTag;
-  console.log("newTags: " + newTags);
 
   return newTags;
 }
@@ -145,7 +141,6 @@ export default class index extends Component {
   // Get any change in inputs of tag and the row
   // Set name and searchTag
   onChangeTag(e, key) {
-    console.log("onChangeTag: " + this.state.students);
     let oldTags = [...this.state.tags];
     let oldTag = { ...oldTags[key] };
     oldTag = e.target.value;
@@ -167,9 +162,6 @@ export default class index extends Component {
   // Set (add) new tag in "tags" with addTags() and reset the tag with resetTag()
   onSubmit(e, key) {
     e.preventDefault();
-    console.log("onSubmit", this.state.students);
-    console.log("key", key);
-    console.log("this.state.tags[key]", this.state.tags[key]);
 
     this.setState({
       students: addTags(this.state.students, this.state.tags[key], key),

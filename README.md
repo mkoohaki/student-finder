@@ -1,5 +1,13 @@
-<img src="img/Pic.PNG" width="80%" height="auto" margin-left="10%">
+#Student Finder Application
 
+
+<img src="img/Pic.PNG" width="80%" height="auto">
+
+
++ This is an application just for practice front-end with React.js
++ This application get information from an open api
++ User can search the name of students / add tags to their info and search students with tag
++ User also can see the grade details with clicking + burron
 
 
 

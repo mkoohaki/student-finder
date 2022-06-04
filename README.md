@@ -4,10 +4,11 @@
 <img src="img/Pic.PNG" width="80%" height="auto">
 
 
-+ This is an application just for practice front-end with React.js.
++ This is an application just for front-end practice with React.js.
 + This application gets information from an open api at the start and manipulate the data until the page /apllication be refreshed.
 + User can search the name of students / add skills tag to their info and search students with tag.
 + User also can see the grade details with clicking + burron.
++ It is using hook state.
 
 
 

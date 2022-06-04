@@ -1,4 +1,4 @@
-import { Component } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../style/style.css";
 
@@ -101,101 +101,85 @@ function displayList(students, name, tag) {
 }
 
 // Class
-export default class index extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      permanentStudents: [],
-      students: [],
-      name: "",
-      tags: [],
-      searchTag: "",
-      placeholder: "",
-    };
-
-    this.onChange = this.onChange.bind(this);
-  }
+const Home = () => {
+  const [students, setStudents] = useState([]);
+  const [state, setState] = useState({
+    name: "",
+    searchTag: "",
+  });
+  const [tags, setTags] = useState([]);
 
   // Get objects as an array from an api
   // Set state students after calling getAllAveragefor() and gradeVisibility()
-  componentDidMount() {
-    axios.get("https://api.hatchways.io/assessment/students").then((res) => {
-      let newStudents = getAllAveragefor(res.data.students);
-      newStudents = gradeVisibility(newStudents);
-      this.setState({
-        students: newStudents,
-        permanentStudents: newStudents,
+  // const componentDidMount = () => {
+  useEffect(() => {
+    axios
+      .get("https://api.hatchways.io/assessment/students")
+      .then((res) => {
+        let newStudents = getAllAveragefor(res.data.students);
+        newStudents = gradeVisibility(newStudents);
+        setStudents(newStudents);
+      })
+      .catch((error) => {
+        console.error(error);
       });
-    });
-  }
+  }, []);
 
   // Get any change in inputs of name and searchTag
   // Set name and searchTag
-  onChange(e) {
-    this.setState({
-      [e.target.name]: e.target.value,
-    });
-  }
+  const onChange = (e) => {
+    setState({ ...state, [e.target.name]: e.target.value });
+  };
 
   // Get any change in inputs of tag and the row
   // Set name and searchTag
-  onChangeTag(e, key) {
-    let oldTags = [...this.state.tags];
+  const onChangeTag = (e, key) => {
+    let oldTags = [...tags];
     let oldTag = { ...oldTags[key] };
     oldTag = e.target.value;
     oldTags[key] = oldTag;
-    this.setState({
-      tags: oldTags,
-    });
-  }
+    setTags(oldTags);
+  };
 
   // Get the row number
   // Set "gradeVisible" to opposite of this in students array
-  onOpen(key) {
-    let state = this.state.students;
+  const onOpen = (key) => {
+    let state = students;
     state[key].gradeVisible = !state[key].gradeVisible;
-    this.setState({ state });
-  }
+    setStudents([...state]);
+  };
 
   // Get the row number of hidden button clicked
   // Set (add) new tag in "tags" with addTags() and reset the tag with resetTag()
-  onSubmit(e, key) {
+  const onSubmit = (e, key) => {
     e.preventDefault();
+    setStudents([...addTags(students, tags[key], key)]);
+    setTags(resetTag(tags, key));
+  };
 
-    this.setState({
-      students: addTags(this.state.students, this.state.tags[key], key),
-      tags: resetTag(this.state.tags, key),
-    });
-  }
-
-  render() {
-    return (
-      <main>
-        <input
-          type='text'
-          className='input'
-          placeholder='Sarch by name'
-          name='name'
-          value={this.state.name}
-          onChange={this.onChange}
-        />
-        <input
-          type='text'
-          className='input'
-          placeholder='Sarch by tag'
-          name='searchTag'
-          value={this.state.searchTag}
-          onChange={this.onChange}
-        />
-        <div id='body'>
-          {/* sdfsdffd */}
-          {displayList(
-            this.state.students,
-            this.state.name,
-            this.state.searchTag
-          ).map((student, i) => (
-            <div key={i}>
+  // render() {
+  return (
+    <main>
+      <input
+        type='text'
+        className='input'
+        placeholder='Sarch by name'
+        name='name'
+        value={state.name}
+        onChange={onChange}
+      />
+      <input
+        type='text'
+        className='input'
+        placeholder='Sarch by tag'
+        name='searchTag'
+        value={state.searchTag}
+        onChange={onChange}
+      />
+      <div id='body'>
+        {displayList(students, state.name, state.searchTag).map(
+          (student, i) => (
+            <div key={`student${i}`}>
               <div className='div' id='div1'>
                 <img
                   src={student.pic}
@@ -215,14 +199,14 @@ export default class index extends Component {
                 {student.gradeVisible ? (
                   <button
                     id={`button${student.id - 1}`}
-                    onClick={() => this.onOpen(student.id - 1)}
+                    onClick={() => onOpen(student.id - 1)}
                   >
                     -
                   </button>
                 ) : (
                   <button
                     id={`button${student.id - 1}`}
-                    onClick={() => this.onOpen(student.id - 1)}
+                    onClick={() => onOpen(student.id - 1)}
                   >
                     +
                   </button>
@@ -231,9 +215,9 @@ export default class index extends Component {
               <div id='gradeDiv'>
                 {student.gradeVisible ? (
                   <ul>
-                    {student.grades.map((grade, i) => (
-                      <li key={i}>
-                        Test {i + 1}
+                    {student.grades.map((grade, j) => (
+                      <li key={`student${student.id - 1}-grade${j}`}>
+                        Test {j + 1}
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{grade}%
                       </li>
                     ))}
@@ -243,8 +227,11 @@ export default class index extends Component {
               <div className='tagDiv'>
                 {student.tags ? (
                   <div>
-                    {student.tags.map((tag, i) => (
-                      <p key={i} className='pTag'>
+                    {student.tags.map((tag, k) => (
+                      <p
+                        key={`student${student.id - 1}-tag${k}`}
+                        className='pTag'
+                      >
                         {tag}
                       </p>
                     ))}
@@ -252,20 +239,23 @@ export default class index extends Component {
                 ) : null}
               </div>
               <div>
-                <form onSubmit={(e) => this.onSubmit(e, student.id - 1)}>
+                <form onSubmit={(e) => onSubmit(e, student.id - 1)}>
                   <input
                     id='tagInput'
                     placeholder='Add a tag'
-                    value={this.state.tags[student.id - 1]}
-                    onChange={(e) => this.onChangeTag(e, student.id - 1)}
+                    // value={this.state.tags[student.id - 1] || ""}
+                    value={tags[student.id - 1] || ""}
+                    onChange={(e) => onChangeTag(e, student.id - 1)}
                   />
                   <input type='submit' hidden />
                 </form>
               </div>
             </div>
-          ))}
-        </div>
-      </main>
-    );
-  }
-}
+          )
+        )}
+      </div>
+    </main>
+  );
+};
+
+export default Home;

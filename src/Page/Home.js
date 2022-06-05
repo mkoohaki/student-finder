@@ -242,7 +242,6 @@ const Home = () => {
                   <input
                     id='tagInput'
                     placeholder='Add a tag'
-                    // value={this.state.tags[student.id - 1] || ""}
                     value={tags[student.id - 1] || ""}
                     onChange={(e) => onChangeTag(e, student.id - 1)}
                   />
